@@ -1,0 +1,29 @@
+# ==============================================================================
+# CSV Sanitizer Configuration
+# ==============================================================================
+# Modify this file to match your dataset's column names and processing rules.
+# Unspecified keys automatically fall back to built-in system defaults.
+
+columns:
+  # Exact column header names present in your CSV file
+  name: "name"
+  phone: "phone"
+  email: "email"
+  date: "date"
+
+phone:
+  # Fallback two-letter ISO 3166-1 alpha-2 country code when numbers lack '+' prefix
+  # Examples: "US", "IN", "GB", "AU", "CA"
+  default_country: "US"
+  # Standardized international phone number format (E.164: +<country_code><number>)
+  output_format: "E164"
+
+deduplication:
+  # RapidFuzz similarity score (0-100) at or above which rows are automatically merged
+  auto_merge_threshold: 90
+  # RapidFuzz similarity score (0-100) at or above which rows are flagged for human review
+  flag_threshold: 70
+
+output:
+  # Target date format string conforming to standard strftime specifications
+  date_format: "%Y-%m-%d"

@@ -1,0 +1,9 @@
+# Direct runtime and test dependencies (unpinned).
+# After install, run: uv pip freeze > requirements.txt
+# to lock exact versions for reproducible environments.
+
+pandas
+rapidfuzz
+phonenumbers
+PyYAML
+pytest
