@@ -1,9 +1,14 @@
-# Direct runtime and test dependencies (unpinned).
-# After install, run: uv pip freeze > requirements.txt
-# to lock exact versions for reproducible environments.
-
-pandas
-rapidfuzz
-phonenumbers
-PyYAML
-pytest
+colorama==0.4.6
+iniconfig==2.3.0
+numpy==2.5.3
+packaging==26.3
+pandas==3.0.6
+phonenumbers==9.0.40
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+pyyaml==6.0.3
+rapidfuzz==3.14.6
+six==1.17.0
+tzdata==2026.4
