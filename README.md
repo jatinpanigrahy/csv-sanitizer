@@ -1,25 +1,25 @@
 # CSV Sanitizer
 
-CSV Sanitizer is a robust, configurable Python utility designed to clean messy, real-world tabular data. It standardizes heterogeneous formats across common business fields, applies intelligent fuzzy deduplication, and generates an audit-ready Markdown report summarizing every modification.
+CSV Sanitizer is a configurable Python tool designed to clean messy data in CSV files. It standardizes different formats across common business fields, detects duplicate rows using fuzzy matching, and generates a clear Markdown report summarizing every change made.
 
 ---
 
 ## Features
 
-- **Name Normalization**: Standardizes personal and contact names into Title Case, strips extraneous whitespace, and tracks modified rows.
-- **Email Sanitization**: Converts email addresses to lowercase conforming to RFC standards, trims whitespace, and tallies missing values.
-- **Date Standardization**: Parses varied and mixed date formats (ISO, US, European, timestamps) into a uniform target format (default: `YYYY-MM-DD`), preserving unparseable entries safely.
-- **International Phone Formatting**: Validates and standardizes telephone numbers into the international E.164 format (e.g., `+14155552671`) using Google's `phonenumbers` library (`libphonenumber`), with fallback support for regional numbers missing country codes.
-- **Tiered Fuzzy Deduplication**: Evaluates records using token-sort string similarity (`RapidFuzz`):
-  - **Auto-Merge (Score &ge; 90)**: Merges high-confidence duplicate records automatically, retaining the row with the most complete attributes.
-  - **Human-in-the-Loop Flagging (70 &le; Score < 90)**: Flags borderline duplicates with a `flag_reason = SUSPECTED_DUPLICATE` annotation in the output CSV for manual verification.
-- **Audit Reporting**: Automatically compiles a companion Markdown report with detailed telemetry, transformation counts, and flagged review notes.
+- **Name Normalization**: Converts names to Title Case, removes extra whitespace, and tracks how many rows were updated.
+- **Email Sanitization**: Converts email addresses to lowercase, trims whitespace, and counts missing values.
+- **Date Standardization**: Converts different date formats (ISO, US, European, timestamps) into a single format (default: `YYYY-MM-DD`), while safely keeping unparseable entries unchanged.
+- **International Phone Formatting**: Validates and formats phone numbers into the standard international E.164 format (e.g., `+14155552671`) using Google's `phonenumbers` library (`libphonenumber`). It also supports local numbers that are missing a country code.
+- **Tiered Fuzzy Deduplication**: Finds similar rows using string matching (`RapidFuzz`):
+  - **Auto-Merge (Score &ge; 90)**: Merges high-confidence duplicate records automatically, keeping the row with the most complete information.
+  - **Flagging for Review (70 &le; Score < 90)**: Marks borderline duplicates with `flag_reason = SUSPECTED_DUPLICATE` in the output CSV for manual verification.
+- **Audit Reporting**: Automatically creates a companion Markdown report with summary stats, change counts, and notes on flagged rows.
 
 ---
 
 ## Installation & Setup
 
-CSV Sanitizer uses [`uv`](https://github.com/astral-sh/uv) for fast and reliable Python package management.
+CSV Sanitizer uses [`uv`](https://github.com/astral-sh/uv) to manage Python packages quickly and reliably.
 
 ### Prerequisites
 
@@ -45,22 +45,22 @@ uv pip install -r requirements.txt
 
 ## Usage
 
-Run the sanitizer directly via the command-line interface:
+Run the sanitizer from the command line:
 
 ```bash
 python sanitize.py <input.csv>
 ```
 
-By default, the tool writes the sanitized dataset to `<input_stem>_clean.csv` and the audit report to `<input_stem>_report.md` within the same folder as the input file.
+By default, the tool saves the cleaned data to `<input_stem>_clean.csv` and the report to `<input_stem>_report.md` in the same folder as the input file.
 
 ### CLI Options
 
 | Flag | Argument | Description | Default |
 |---|---|---|---|
-| `input` | Path | Positional path to the raw source CSV file. | *(Required)* |
-| `--output` | Path | Custom destination path for the sanitized CSV. | `<input_stem>_clean.csv` |
-| `--report` | Path | Custom destination path for the Markdown audit report. | `<input_stem>_report.md` |
-| `--config` | Path | Path to custom YAML configuration file. | `config.yaml` |
+| `input` | Path | Path to the raw source CSV file. | *(Required)* |
+| `--output` | Path | Custom path for saving the cleaned CSV. | `<input_stem>_clean.csv` |
+| `--report` | Path | Custom path for saving the Markdown report. | `<input_stem>_report.md` |
+| `--config` | Path | Path to a custom YAML configuration file. | `config.yaml` |
 
 #### Example
 
@@ -72,7 +72,7 @@ python sanitize.py sample/sample_input.csv --output sample/cleaned.csv --report 
 
 ## Configuration
 
-Custom column headers, parsing defaults, and deduplication thresholds can be adjusted without code changes using `config.yaml`.
+You can customize column names, default settings, and deduplication cutoffs in `config.yaml` without changing any code.
 
 ```yaml
 columns:
@@ -98,20 +98,20 @@ output:
   date_format: "%Y-%m-%d"
 ```
 
-If `config.yaml` is missing or keys are omitted, the application automatically applies built-in defaults via recursive deep merging.
+If `config.yaml` is missing or some settings are omitted, the tool automatically applies default settings.
 
 ---
 
 ## Architecture & Design Decisions
 
-The application follows a four-layer architecture engineered for clean separation of concerns and high testability:
+The project is organized into four layers so that each part has a single job and is easy to test:
 
-1. **Configuration Layer (`cleaner/config.py`)**: Loads user YAML definitions and performs recursive fallback merges against default settings, guaranteeing zero-failure operation when settings are partial.
-2. **Normalizers Layer (`cleaner/normalizers.py`)**: Contains pure, stateless functions for individual data domains (names, emails, phones, dates). Each function accepts a pandas Series and returns transformed values along with modification counts, keeping domain logic isolated from I/O.
-3. **Pipeline Layer (`cleaner/pipeline.py` & `cleaner/deduplicator.py`)**: Orchestrates the sequential execution—reading raw data, applying normalizers, executing tiered fuzzy deduplication, generating the Markdown audit report via `cleaner/reporter.py`, and writing outputs.
-4. **CLI Layer (`sanitize.py`)**: Handles argument parsing, path validation, execution delegation, and terminal summary reporting.
+1. **Configuration Layer (`cleaner/config.py`)**: Loads the user's YAML file and applies default settings for anything missing, ensuring the program runs smoothly even with partial settings.
+2. **Normalizers Layer (`cleaner/normalizers.py`)**: Contains independent functions for individual data types (names, emails, phones, dates). Each function accepts a pandas Series and returns transformed values along with change counts, keeping cleaning rules separate from file operations.
+3. **Pipeline Layer (`cleaner/pipeline.py` & `cleaner/deduplicator.py`)**: Manages the cleaning process from start to finish—reading raw data, applying normalizers, finding duplicates, creating the Markdown report with `cleaner/reporter.py`, and saving output files.
+4. **CLI Layer (`sanitize.py`)**: Handles command-line arguments, checks file paths, runs the pipeline, and prints summary results to the terminal.
 
-This layered structure ensures each transformation step and deduplication rule can be unit-tested independently without mocking filesystem operations or CLI state.
+This structure makes it easy to test each cleaning rule and deduplication step on its own without needing dummy files or fake command-line setups.
 
 ---
 
@@ -119,14 +119,8 @@ This layered structure ensures each transformation step and deduplication rule c
 
 ### Deduplication Complexity
 
-The fuzzy deduplicator utilizes an pairwise comparison algorithm with $O(n^2)$ time complexity to detect approximate string matches across records:
+The fuzzy deduplicator compares every record against every other record ($O(n^2)$ time complexity) to detect approximate matches:
 
-- **Optimal Scope**: Datasets up to **~10,000 rows**, where pairwise comparison finishes quickly and memory overhead remains low.
-- **Scale Considerations**: For larger datasets (tens of thousands to millions of rows), comparing every row against all subsequent rows becomes computationally prohibitive.
-- **Scaling Path**: Production deployments handling massive volumes should introduce **blocking strategies** (such as partitioning records by first-letter index, postal code, or phonetic encodings like Soundex/Double Metaphone) or locality-sensitive hashing (LSH) to restrict fuzzy comparisons to candidate subsets.
-
----
-
-## License
-
-This project is licensed under the MIT License.
+- **Optimal Scope**: Datasets up to **~10,000 rows**, where comparisons finish quickly and memory use remains low.
+- **Scale Considerations**: For larger datasets (tens of thousands to millions of rows), comparing every row against all other rows becomes too slow.
+- **Scaling Path**: Production setups handling large volumes should add **blocking strategies** (such as grouping records by first letter, postal code, or phonetic sound) or hashing techniques to limit comparisons to smaller groups.
