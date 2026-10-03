@@ -1,0 +1,5 @@
+name,phone,email,date,flag_reason
+Alice Smith,+12025550100,alice@example.com,2023-02-20,
+Bob Jones,+12025550101,bob.jones@example.com,2023-03-05,
+Charlie Brown,+12025550102,,2023-04-10,
+John Doe,+12025550103,john.doe@example.com,2023-01-15,

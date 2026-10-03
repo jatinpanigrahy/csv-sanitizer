@@ -1,0 +1,6 @@
+name,phone,email,date
+alice smith,(202) 555-0100,alice@example.com,2023/02/20
+BOB JONES,+1-202-555-0101,bob.jones@EXAMPLE.com,"March 5, 2023"
+charlie brown,202.555.0102,,04/10/2023
+john doe,2025550103,john.doe@example.com,2023-01-15
+jon doe,(202) 555-0103,,2023.05.25
