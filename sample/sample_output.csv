@@ -1,0 +1,11 @@
+name,phone,email,date,flag_reason
+John Doe,+12025550143,john.doe@example.com,2023-01-15,
+Alice Smith,+442079460919,alice.smith@company.co.uk,2022-12-05,
+Jonathan Smith,+14155552671,jsmith@sample.org,2021-10-04,
+Mary Jane,+13125550188,mary.jane@domain.com,2019-04-15,
+Alexander Hamilton,+12125550199,ahamilton@treasury.gov,2024-02-29,SUSPECTED_DUPLICATE
+Alex Hamilton,+12125550199,,2024-02-29,SUSPECTED_DUPLICATE
+Catherine Brown,+33142685555,cbrown@service.fr,2023-03-14,
+Bobby Fischer,+12135550177,,2020-07-04,
+Eleanor Roosevelt,+12025550164,eleanor@whitehouse.org,1933-03-04,
+Victor Von Doom,+4930123456,doom@latveria.net,2022-11-18,
