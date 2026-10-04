@@ -1,5 +1,7 @@
 # CSV Sanitizer
 
+[![CI](https://github.com/jatinpanigrahy/csv-sanitizer/actions/workflows/ci.yml/badge.svg)](https://github.com/jatinpanigrahy/csv-sanitizer/actions/workflows/ci.yml)
+
 CSV Sanitizer is a configurable Python tool designed to clean messy data in CSV files. It standardizes different formats across common business fields, detects duplicate rows using fuzzy matching, and generates a clear Markdown report summarizing every change made.
 
 ---
